@@ -154,7 +154,7 @@ GaussianFactorGraph LevenbergMarquardtOptimizerExt::buildDampedSystem(const Gaus
   if (params_.verbosityLM >= LevenbergMarquardtParams::DAMPED)
     std::cout << "building damped system with lambda " << currentState->lambda << std::endl;
 
-  if (params_.diagonalDamping)
+  if (params_.dampingParams.diagonalDamping)
     return currentState->buildDampedSystem(linear, sqrtHessianDiagonal);
   else
     return currentState->buildDampedSystem(linear);
@@ -381,10 +381,10 @@ GaussianFactorGraph::shared_ptr LevenbergMarquardtOptimizerExt::iterate() {
 
   // Only calculate diagonal of Hessian (expensive) once per outer iteration, if we need it
   VectorValues sqrtHessianDiagonal;
-  if (params_.diagonalDamping) {
+  if (params_.dampingParams.diagonalDamping) {
     sqrtHessianDiagonal = linear->hessianDiagonal();
     for (auto& [key, value] : sqrtHessianDiagonal) {
-      value = value.cwiseMax(params_.minDiagonal).cwiseMin(params_.maxDiagonal).cwiseSqrt();
+      value = value.cwiseMax(params_.dampingParams.minDiagonal).cwiseMin(params_.dampingParams.maxDiagonal).cwiseSqrt();
     }
   }
 
