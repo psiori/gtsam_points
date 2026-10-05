@@ -32,6 +32,7 @@ class GtsamPointsConan(ConanFile):
         tc = CMakeToolchain(self)
         tc.variables["BUILD_WITH_CUDA"] = self.options.build_with_cuda
         tc.variables["BUILD_WITH_MARCH_NATIVE"] = self.options.build_with_march_native
+        tc.variables["BUILD_WITH_OPENMP"] = False
         tc.variables["BUILD_DEMO"] = False
         tc.variables["BUILD_TESTS"] = False
         tc.generate()
@@ -48,5 +49,8 @@ class GtsamPointsConan(ConanFile):
         cmake.install()
 
     def package_info(self):
-        self.cpp_info.set_property("cmake_file_name", "gtsam_points")
-        self.cpp_info.set_property("cmake_target_name", "gtsam_points::gtsam_points")
+        self.cpp_info.set_property("cmake_find_mode", "none")
+        self.cpp_info.includedirs = ["include"]
+        self.cpp_info.libdirs = ["lib"]
+        self.cpp_info.libs = ["gtsam_points"]
+        self.cpp_info.builddirs.append("lib/cmake/gtsam_points")
