@@ -1,5 +1,5 @@
 from conan import ConanFile
-from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
+from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 
 
 class GtsamPointsConan(ConanFile):
@@ -35,6 +35,8 @@ class GtsamPointsConan(ConanFile):
         tc.variables["BUILD_DEMO"] = False
         tc.variables["BUILD_TESTS"] = False
         tc.generate()
+        deps = CMakeDeps(self)
+        deps.generate()
 
     def build(self):
         cmake = CMake(self)
@@ -44,3 +46,7 @@ class GtsamPointsConan(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
+
+    def package_info(self):
+        self.cpp_info.set_property("cmake_file_name", "gtsam_points")
+        self.cpp_info.set_property("cmake_target_name", "gtsam_points::gtsam_points")
