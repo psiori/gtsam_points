@@ -20,8 +20,11 @@ include(CMakeFindDependencyMacro)
 find_dependency(Eigen3 REQUIRED)
 find_dependency(GTSAM REQUIRED)
 find_dependency(GTSAM_UNSTABLE REQUIRED)
-find_dependency(OpenMP REQUIRED)
 find_dependency(Boost REQUIRED COMPONENTS filesystem graph)
+
+if(GTSAM_POINTS_USE_OPENMP)
+  find_dependency(OpenMP REQUIRED)
+endif()
 
 if(GTSAM_POINTS_USE_TBB)
   find_dependency(TBB REQUIRED)

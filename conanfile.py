@@ -1,5 +1,17 @@
+import os
+
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
+
+
+def _set_gtsam_dir(tc, conanfile):
+    try:
+        gtsam = conanfile.dependencies["gtsam"]
+    except (KeyError, AttributeError):
+        return
+    gtsam_dir = os.path.join(gtsam.package_folder, "lib", "cmake", "GTSAM")
+    if os.path.isdir(gtsam_dir):
+        tc.variables["GTSAM_DIR"] = gtsam_dir
 
 
 class GtsamPointsConan(ConanFile):
@@ -13,7 +25,7 @@ class GtsamPointsConan(ConanFile):
         "build_with_march_native": [True, False],
     }
     default_options = {
-        "shared": True,
+        "shared": False,
         "fPIC": True,
         "build_with_cuda": False,
         "build_with_march_native": True,
@@ -32,9 +44,10 @@ class GtsamPointsConan(ConanFile):
         tc = CMakeToolchain(self)
         tc.variables["BUILD_WITH_CUDA"] = self.options.build_with_cuda
         tc.variables["BUILD_WITH_MARCH_NATIVE"] = self.options.build_with_march_native
-        tc.variables["BUILD_WITH_OPENMP"] = False
+        tc.variables["BUILD_WITH_OPENMP"] = True
         tc.variables["BUILD_DEMO"] = False
         tc.variables["BUILD_TESTS"] = False
+        _set_gtsam_dir(tc, self)
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
